@@ -1,0 +1,98 @@
+<div class="container navBar">
+    <div class="row">
+        <div class="col-xs-6">
+            <select class="dropDown" [(ngModel)]="selectedSort" (click)="SortingResult()">
+                <option value="NameAlphabeticallyAZ">Sort By Name (A-Z)</option>
+                <option value="NameReverseAlphabeticallyZA">Sort By Name (Z-A)</option>
+                <option value="RankUp">Sort By Rank Up</option>
+                <option value="RankDown">Sort By Rank Down</option>
+            </select>
+        </div>
+        <div class="col-xs-6">
+            <input type="text" id="inputName" [(ngModel)]="inputName" placeholder="Search Names by clicking icon" />
+            <button class="searchButton" (click)="searchByName()">
+                <i class="glyphicon glyphicon-search"></i>
+            </button>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="count" *ngIf="totalUserCount > 0">
+            <b>Total Results:</b> {{totalUserCount}}
+        </div>
+        <div *ngIf="totalUserCount == 0" class="noData">
+            No data available for given search keyword :
+            <b>{{inputName}}</b>. Try searching with other names like "varun", "shivani"...
+        </div>
+        <div *ngFor="let user of userDataItems">
+            <div class="card row">
+                <div class="col-sm-3">
+                    <img src={{user.avatar_url}} width="120px" height="120px">
+                </div>
+                <div class="col-sm-7">
+                    <div class="name">{{user.login}}</div>
+                    <div>
+                        <b>Profile URL:</b> {{user.url}}</div>
+                    <div>
+                        <b>Score:</b> {{user.score}}</div>
+                    <div>
+                        <b>Type:</b> {{user.type}}</div>
+                    <div>
+                        <b>Site-Admin:</b> {{user.site_admin}}</div>
+                </div>
+
+                <!--Details Button-->
+                <div class="collapsed active detailButton col-sm-2" data-toggle="collapse"
+                    [attr.data-target]="'#'+user.login">
+                    <button class="btn btn-primary" (click)="getUserFullDetails(user.login, user.id)">
+                        Details
+                        <span class="caret"></span>
+                    </button>
+                </div>
+
+                <!--Details Card-->
+                <div id={{user.login}} class="collapse card_details">
+                    <div class="row">
+                        <table class="table table-striped">
+                            <thead>
+                                <th>Repository Name</th>
+                                <th>Language</th>
+                                <th>Stars</th>
+                                <th>Forks</th>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let userRepo of userDetails">
+                                    <td>{{userRepo.name}}</td>
+                                    <td>{{userRepo.language}}</td>
+                                    <td>{{userRepo.stargazers_count}}</td>
+                                    <td>{{userRepo.forks_count}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Pagination-->
+<div *ngIf="totalUserCount > 0">
+    <div class="btn-toolbar" role="toolbar" style="margin: 0;">
+        <div class="btn-group pull-right">
+            <ul class="pagination">
+                <li [ngClass]="{'disabled': (currentIndex == 1 || pageNumber == 0)}">
+                    <a (click)="prevPage()" href="#">Prev</a>
+                </li>
+                <li *ngFor="let page of pagesIndex" [ngClass]="{'active': (currentIndex == page)}">
+                    <a (click)="setPage(page)" href="#">{{page}}</a>
+                </li>
+                <li [ngClass]="{'disabled': (currentIndex == pageNumber || pageNumber == 0)}">
+                    <a (click)="nextPage()" href="#">Next</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
